@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .current-time,
+        .current-date {
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .sensors-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+        }
+
+        .sensor {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            width: calc(50% - 40px);
+        }
+
+        .comparison {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            width: calc(50% - 40px);
+        }
+
+        h2 {
+            color: #3498db;
+        }
+
+        .sensor p {
+            display: inline-block;
+            width: calc(50% - 20px);
+            margin-right: 20px;
+            box-sizing: border-box;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div>
+            <h1>Sensor Data</h1>
+        </div>
+        <div>
+            <div class="current-time" id="currentTime"></div>
+            <div class="current-date" id="currentDate"></div>
+        </div>
+    </div>
+
+    <div class="sensors-container">
+        <div class="sensor" id="sensor1">
+            <h2>Sensor 1</h2>
+            <img src="data:image/jpeg;base64,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" alt="Sensor 1 Image">
+            <p>Temperature: <span id="temp1"></span>°C</p>
+            <p>Pressure: <span id="pressure1"></span>hPa</p>
+            <p>Humidity: <span id="humidity1"></span>%</p>
+            <p>Gas Resistance: <span id="gas1"></span>Ohms</p>
+        </div>
+
+        <div class="sensor" id="sensor2">
+            <h2>Sensor 2</h2>
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4Xad6dmW903a_mOFJtdpVrn3YOWlTam7_UQ&usqp=CAU" alt="Sensor 2 Image">
+            <p>Temperature: <span id="temp2"></span>°C</p>
+            <p>Pressure: <span id="pressure2"></span>hPa</p>
+            <p>Humidity: <span id="humidity2"></span>%</p>
+            <p>Gas Resistance: <span id="gas2"></span>Ohms</p>
+        </div>
+
+        <div class="comparison" id="sensorComparison">
+            <h2>Data Analysis</h2>
+            <button onclick="displayAverage()">Average</button>
+            <button onclick="displayMin()">Min</button>
+            <button onclick="displayMax()">Max</button>
+            <button onclick="clearValues()">Clear</button>
+        </div>
+    </div>
+
+    <div class="sensor" id="averageValues" style="display: none;">
+        <h2>Average Values</h2>
+        <p>Temperature: <span id="avgTemp"></span> °C</p>
+        <p>Pressure: <span id="avgPressure"></span> hPa</p>
+        <p>Humidity: <span id="avgHumidity"></span>%</p>
+        <p>Gas Resistance: <span id="avgGas"></span> Ohms</p>
+    </div>
+
+    <div class="sensor" id="minValues" style="display: none;">
+        <h2>Minimum Values</h2>
+        <p>Temperature: <span id="minTemp"></span> °C</p>
+        <p>Pressure: <span id="minPressure"></span> hPa</p>
+        <p>Humidity: <span id="minHumidity"></span>%</p>
+        <p>Gas Resistance: <span id="minGas"></span> Ohms</p>
+    </div>
+
+    <div class="sensor" id="maxValues" style="display: none;">
+        <h2>Maximum Values</h2>
+        <p>Temperature: <span id="maxTemp"></span> °C</p>
+        <p>Pressure: <span id="maxPressure"></span> hPa</p>
+        <p>Humidity: <span id="maxHumidity"></span>%</p>
+        <p>Gas Resistance: <span id="maxGas"></span> Ohms</p>
+    </div>
+
+<script>
+    // Initialize variables
+    var max_temp = 0;
+    var max_hum = 0;
+    var max_pressure = 0;
+    var max_gas = 0;
+    var min_temp = Number.MAX_VALUE;
+    var min_hum = Number.MAX_VALUE;
+    var min_pressure = Number.MAX_VALUE;
+    var min_gas = Number.MAX_VALUE;
+    var total_temp = 0;
+    var total_hum = 0;
+    var total_pressure = 0;
+    var total_gas = 0;
+    var dataCount = 0;
+
+    function displayAverage() {
+        document.getElementById('averageValues').style.display = 'block';
+        document.getElementById('avgTemp').innerText = (total_temp / dataCount).toFixed(2);
+        document.getElementById('avgPressure').innerText = (total_pressure / dataCount).toFixed(2);
+        document.getElementById('avgHumidity').innerText = (total_hum / dataCount).toFixed(2);
+        document.getElementById('avgGas').innerText = (total_gas / dataCount).toFixed(2);
+    }
+
+    function displayMin() {
+        document.getElementById('minValues').style.display = 'block';
+        document.getElementById('minTemp').innerText = min_temp;
+        document.getElementById('minPressure').innerText = min_pressure;
+        document.getElementById('minHumidity').innerText = min_hum;
+        document.getElementById('minGas').innerText = min_gas;
+    }
+
+    function displayMax() {
+        document.getElementById('maxValues').style.display = 'block';
+        document.getElementById('maxTemp').innerText = max_temp;
+        document.getElementById('maxPressure').innerText = max_pressure;
+        document.getElementById('maxHumidity').innerText = max_hum;
+        document.getElementById('maxGas').innerText = max_gas;
+    }
+
+    function clearValues() {
+        document.getElementById('averageValues').style.display = 'none';
+        document.getElementById('minValues').style.display = 'none';
+        document.getElementById('maxValues').style.display = 'none';
+
+        max_temp = 0;
+        max_hum = 0;
+        max_pressure = 0;
+        max_gas = 0;
+        min_temp = Number.MAX_VALUE;
+        min_hum = Number.MAX_VALUE;
+        min_pressure = Number.MAX_VALUE;
+        min_gas = Number.MAX_VALUE;
+        total_temp = 0;
+        total_hum = 0;
+        total_pressure = 0;
+        total_gas = 0;
+        dataCount = 0;
+    }
+
+    function updateSensorData() {
+        fetch('/sensor_data')
+            .then(response => response.json())
+            .then(sensorData => {
+                document.getElementById('temp1').innerText = sensorData.sensor1.temperature.toFixed(2);
+                document.getElementById('pressure1').innerText = sensorData.sensor1.pressure.toFixed(2);
+                document.getElementById('humidity1').innerText = sensorData.sensor1.humidity.toFixed(2);
+                document.getElementById('gas1').innerText = sensorData.sensor1.gas_resistance;
+
+                document.getElementById('temp2').innerText = sensorData.sensor2.temperature.toFixed(2);
+                document.getElementById('pressure2').innerText = sensorData.sensor2.pressure.toFixed(2);
+                document.getElementById('humidity2').innerText = sensorData.sensor2.humidity.toFixed(2);
+                document.getElementById('gas2').innerText = sensorData.sensor2.gas_resistance;
+
+                if (sensorData.sensor1.temperature.toFixed(2) > max_temp) {
+                    max_temp = sensorData.sensor1.temperature.toFixed(2);
+                }
+                if (sensorData.sensor1.pressure.toFixed(2) > max_pressure) {
+                    max_pressure = sensorData.sensor1.pressure.toFixed(2);
+                }
+                if (sensorData.sensor1.humidity.toFixed(2) > max_hum) {
+                    max_hum = sensorData.sensor1.humidity.toFixed(2);
+                }
+                if (sensorData.sensor1.gas_resistance > max_gas) {
+                    max_gas = sensorData.sensor1.gas_resistance;
+                }
+                if (sensorData.sensor1.temperature.toFixed(2) < min_temp) {
+                    min_temp = sensorData.sensor1.temperature.toFixed(2);
+                }
+                if (sensorData.sensor1.pressure.toFixed(2) < min_pressure) {
+                    min_pressure = sensorData.sensor1.pressure.toFixed(2);
+                }
+                if (sensorData.sensor1.humidity.toFixed(2) < min_hum) {
+                    min_hum = sensorData.sensor1.humidity.toFixed(2);
+                }
+                if (sensorData.sensor1.gas_resistance < min_gas) {
+                    min_gas = sensorData.sensor1.gas_resistance;
+                }
+
+                total_temp += parseFloat(sensorData.sensor1.temperature);
+                total_hum += parseFloat(sensorData.sensor1.humidity);
+                total_pressure += parseFloat(sensorData.sensor1.pressure);
+                total_gas += parseFloat(sensorData.sensor1.gas_resistance);
+                dataCount++;
+
+                document.getElementById('avgTemp').innerText = (total_temp / dataCount).toFixed(2);
+                document.getElementById('avgPressure').innerText = (total_pressure / dataCount).toFixed(2);
+                document.getElementById('avgHumidity').innerText = (total_hum / dataCount).toFixed(2);
+                document.getElementById('avgGas').innerText = (total_gas / dataCount).toFixed(2);
+            })
+            .catch(error => console.error('Error fetching sensor data:', error));
+    }
+
+    function updateDateTime() {
+        const currentDateElement = document.getElementById('currentDate');
+        const currentTimeElement = document.getElementById('currentTime');
+        const currentDateTime = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true };
+        const formattedDate = currentDateTime.toLocaleDateString('en-US', options);
+        currentDateElement.innerText = formattedDate;
+        const formattedTime = currentDateTime.toLocaleTimeString('en-US', options);
+        currentTimeElement.innerText = formattedTime;
+    }
+
+    // Initial call to set the current date and time
+    updateDateTime();
+
+    // Update date and time every second
+    setInterval(updateDateTime, 1000);
+
+    // Update sensor data every 5 seconds
+    updateSensorData();
+    setInterval(updateSensorData, 5000);
+</script>
+
+</body>
+
+</html>
+
